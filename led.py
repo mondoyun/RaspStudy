@@ -20,7 +20,7 @@ class LED_Power_ON:
 
     def turn_on(self):
         # 전원을 켜는 명령 전송
-        power_on_command = b'\x7E\x01\xFE\xFE\x00\x0B\x50\x57\x4F\x4E\x02\x00\x00\x00\x00\x00\x00\x00\xFF\xFF\x7E\x00'
+        power_on_command = b'\x7E\x01\xFE\xFE\x00\x0B\x50\x57\x4F\x4E\x02\x00\x00\x00\x00\x00\x00\xFF\xFF\x7E\x00'
         self.serial.write(power_on_command)
         print("LED 전광판 전원을 켰습니다.")
 
@@ -37,7 +37,7 @@ LED = LED_Power_ON()
 
 # LED 전원 켜기
 LED.turn_on()
-time.sleep(1)  # 예시로 1초 대기
+time.sleep(2)  # 예시로 1초 대기
 
 # LED 전원 끄기
 LED.turn_off()
