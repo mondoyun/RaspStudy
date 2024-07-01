@@ -2,9 +2,19 @@ import serial
 import time
 
 class LED_Power_ON:
-    port = "COM3"
+    port = "/dev/ttyUSB0"
     baud = 57600
 
-    serial = serial.Serial(port, baud, timeout=1,parity=0)
+    serial = serial.Serial(port, baud, timeout=1)
 
+    # Manual Event function
+    # init_event = b'\x7E\x01\xFE\xFE\x00\x08\x45\x56\x45\x4E\x01\x02\x04\x00\xFF\xFF\x7E\x00'
+    # start_windows = b'\x7E\x01\xFE\xFE\x00\x08\x45\x56\x45\x4E\x07\x02\xFF\x00\xFF\xFF\x7E\x00'
+    # exit_event = b'\x7E\x01\xFE\xFE\x00\x06\x45\x56\x45\x4E\x00\x00\xFF\xFF\x7E\x00'
+    # clear_buff = b'\x7E\x01\xFE\xFE\x00\x07\x45\x56\x45\x4E\x08\x01\xFF\xFF\xFF\x7E\x00'
+
+    # be fixed Text
+    fixed_start_text = b'\x7E\x01\xFE\xFE\x00' # 첫 시작 [:4] 고정값
+    fixed_end_text = b'\xFF\xFF\x7E\x00' # 끝 부분 [-4:] 고정값
     
+LED = LED_Power_ON()
