@@ -5,7 +5,7 @@ import string
 
 class LED_TEST :
 
-    port = "COM11"
+    port = "COM3"
     baud = 57600
 
     ser = serial.Serial(port, baud, timeout=1)
