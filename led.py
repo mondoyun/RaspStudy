@@ -1,37 +1,53 @@
 import serial
 import time
 
-power_on_command = b'\x7E\x01\xFE\xFE\x00\x0B\x50\x57\x4F\x4E\x02\x00\x00\x00\x00\x00\x00\xFF\xFF\x7E\x00'
-power_off_command = b'\x7E\x01\xFE\xFE\x00\x0B\x50\x57\x4F\x4E\x03\x00\x00\x00\x00\x00\x00\xFF\xFF\x7E\x00'
+class ProtocolPacket:
+    def start(self, Head_of_Frame = b'\x7E\x01', Screen_ID = b'\xFE\xFE'):
+        return Head_of_Frame + Screen_ID
 
+    def end(self, crc = b'\xFF\xFF', eof = b'\x7E\x00'):
+        return crc + eof
+
+    def ondata(self, Data_length = b'\x00\x0B', Cmd_event = b'\x50\x57\x4F\x4E',
+              Sub_Cmd_ID = b'\x02', len = b'\x00', program_id = b'\x00\x00\x00\x00\x00'): 
+        return Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+    
+    def offdata(self, Data_length = b'\x00\x0B', Cmd_event = b'\x50\x57\x4F\x4E',
+              Sub_Cmd_ID = b'\x03', len = b'\x00', program_id = b'\x00\x00\x00\x00\x00'): 
+        return Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+    
 class LED:
-    def __init__(self):
-
-        self.port = "/dev/ttyUSB0"
-        self.baud = 57600
+    def __init__(self, port = "/dev/ttyUSB0", baud=57600, timeout=1):
+        self.port = port
+        self.baud = baud
+        self.timeout = timeout
         self.serial = serial.Serial(self.port, self.baud, timeout=1)
-        
     def turn_on(self):
         # 전원을 켜는 명령 전송
-        self.serial.write(power_on_command)
+        led_start = ProtocolPacket.start(self) + ProtocolPacket.ondata(self) + ProtocolPacket.end(self)
+        self.serial.write(led_start)
         print("LED 전광판 전원을 켰습니다.")
 
     def turn_off(self):
         # 전원을 끄는 명령 전송
-        self.serial.write(power_off_command)
+        led_start = ProtocolPacket.start(self) + ProtocolPacket.offdata(self) + ProtocolPacket.end(self)
+        self.serial.write(led_start)
         print("LED 전광판 전원을 껐습니다.")
 
     def close(self):
-        self.serial.close()        
-# LED 전광판 객체 생성    
-LED = LED()
+        self.serial.close() 
 
-# LED 전원 켜기
-LED.turn_on()
-time.sleep(4) # 4초 대기
+if __name__ == "__main__":
+        # LED 전광판 객체 생성    
+        LED = LED()
 
-# LED 전원 끄기
-LED.turn_off()
+        # LED 전원 켜기
+        LED.turn_on()
+        time.sleep(4) # 4초 대기
 
-# 시리얼 포트 닫기
-LED.close()
+        # LED 전원 끄기
+        LED.turn_off()
+
+        # 시리얼 포트 닫기
+        LED.close()
+    
