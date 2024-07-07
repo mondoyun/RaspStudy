@@ -23,7 +23,7 @@ class LED:
 
     def send_message(self):
         # 메세지 보내는 명령 전송
-        send_text = ProtocolPacket.send_text(self)
+        send_text = ProtocolPacket.send_text(self) 
         self.serial.write(send_text)
         print("LED 전광판 버퍼에 메세지를 보냈습니다.")
 

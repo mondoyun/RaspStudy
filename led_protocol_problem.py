@@ -63,9 +63,10 @@ class ProtocolPacket:
         return Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
     
     def send_text(self,Head_of_Frame,Screen_ID,Data_length,Cmd_event,Sub_Cmd_ID,len,crc,eof,):
-        # 12(4값고정+8구조고정)+31+4 
-        Data = b'\x01\x00\x00\x40\x00\x00\x10{action\x01}{speed\x00}\x00{times\x00}\x01\x00\x00\x01\x00\x01\x00\x02\x00\x68\x65\x6C\x6C\x6F\x20\x57\x6F\x72\x6C\x64'
-        {Head_of_Frame},{Screen_ID},{Data_length},{Cmd_event},{Sub_Cmd_ID},{len\x1F},여기서부터crc전까지31개{},{},{},{action},{},{crc},{eof}
+        # 12(4값고정+8구조고정)+31+4 = 47
+        Data = b'\x01\x00\x00\x40\x00\x00\x10{action\x01}{speed\x00}\x00{times\x00}\x01\x00\x00{font_color\x01}\x00\x01{font_ascii\x00}\x02{font_asian\x00}\x68\x65\x6C\x6C\x6F\x20\x57\x6F\x72\x6C\x64'
+        # action = 20 speed = 21 times = 23 font_color = 27 font_ascii = 30
+        # {Head_of_Frame},{Screen_ID},{Data_length},{Cmd_event},{Sub_Cmd_ID},{len\x1F},여기서부터crc전까지31개{},{},{},{action},{},{crc},{eof}
         self.Data = Data
         return Data
     

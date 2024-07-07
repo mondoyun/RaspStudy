@@ -9,11 +9,101 @@ class LED_TEST :
     baud = 57600
 
     ser = serial.Serial(port, baud, timeout=1)
+    # 2.1 = 18 이벤트 초기화
+    # 2.2 = 16 이벤트 나가기
+    # 2.3 = 23 
+    # X POSITION = 00 00
+    # W WIDTH PIXELS = 40 00 
+    # Y POSITION = 00
+    # H HEIGHT PIXELS = 10
+    # Memory Position = 00
 
+    # 2.4 Display from Memory B = 24 
+    # X POSITION = 00 00
+    # W WIDTH PIXELS = 40 00
+    # Y POSITION = 00
+    # H HEIGHT PIXELS = 10
+    # Reserved = 00
+    # Display Action = 02
+    # 2.4 Roll Memory B to Display Memory = 19
+    # Move Pixels = 10
+    # Use Buffer Data? = 01
+    # Roll Direction = 01
+    # 2.5 = 12 + 6 + 6 = 24 
+    # X POSITION = 00 00
+    # W WIDTH PIXELS = 40 00
+    # Y POSITION = 00
+    # H HEIGHT PIXELS  = 10
+    # 2.6.1  Print Text to Display Area = 63
+    # Reserved = 00
+    # X POSITION = 00 00
+    # W WIDTH PIXELS = 40 00
+    # Y POSITION = 00
+    # H HEIGHT PIXELS = 10
+    # What Memory area = 00
+    # Rotate Speed = 00
+    # Stay Time = 00
+    # Loop Times = 00
+    # Reserved = 01
+    # Multi-Line Display = 00
+    # Align = 00
+    # Default Color = 00
+    # Reserved(FontMode) = 00
+    # Western Font ID = 01 00 
+    # Asian Font ID = 02 00
+    # 5B 43 48 38 5D 41 42 5B
+    # 43 52 5D 43 44 5B 46 43
+    # 30 31 5D 5B 46 54 31 30
+    # Display Message = 31 5D 62
+    # 2.6.2 Print Text to Windows = 63
+    # Windows Number = 02
+    # X POSITION = 40 00
+    # W WIDTH PIXELS = 40 00
+    # Y POSITION = 00 
+    # H HEIGHT PIXELS = 10
+    # Action = 01
+    # Speed of Rotate = 00
+    # Stay Seconds = 00
+    # Loop Times = 00
+    # Memory Position = 01
+    # Multi Lines Disp = 00
+    # Align = 00
+    # Default Color = 00
+    # Reserved(Font Mode) = 00
+    # English Font ID = 01 00
+    # Asian Font ID = 02 00
+    # 5B 43 48 38 5D 41 42 5B
+    # 43 52 5D 43 44 5B 46 43 
+    # 30 31 5D 5B 46 54 31 30
+    # Display Text = 31 5D 62
+    # 2.7 Start to Run All Windows from Back Windows = 18
+    # Reserved(Wnd#) = FF
+    # Reserved = 00
+    # 2.8 Clear all data in Back Windows = 17
+    # Reserved(Wnd#) = FF
+    # 2.9 LINK to an Existed Program = 6 + 53 + 4 = 63
+    # 6 + 26 + 4 = 36
+    # Windows Number = 01
+    # X POSITION = 00 00
+    # W WIDTH PIXELS = 40 00
+    # Y POSITION = 00
+    # H HEIGHT PIXELS = 10
+    # x = 01 
+    # x = 00 
+    # x = 00 
+    # x = 00 
+    # x = 01 
+    # x = 00 
+    # x = 00 
+    # x = 00
+    # x = 00
+    # LinkPgm = 00 C8
+    # x(Wnd) = 00
+    # x(Msg) = 00
+    # 2.10 = 
+    
     # 버퍼 화면에 텍스트 넣기
     '\x7E\x01\xFE\xFE\x00\x25\x45\x56\x45\x4E\x06\x1F\x01\x00\x00\x40\x00\x00\x10\x01\x00\x00\x00\x01\x00\x00\x01\x00\x01\x00\x02\x00\x68\x65\x6C\x6C\x6F\x20\x57\x6F\x72\x6C\x64\xFF\xFF\x7E\x00'
-    # 화면에 출력하기
-    '\x7E\x01\xFE\xFE\x00\x08\x45\x56\x45\x4E\x07\x02\xFF\x00\xFF\xFF\x7E\x00'
     # Manual Event function 
     # 이벤트 초기화 2.1
     init_event = b'\x7E\x01\xFE\xFE\x00\x08\x45\x56\x45\x4E\x01\x02\x04\x00\xFF\xFF\x7E\x00'
@@ -102,7 +192,7 @@ class LED_TEST :
         self.send_text = None
 
     def Send_TXT(self, times, action, speed, font_asian, font_ascii, font_color) :
-
+        # 47
         data = f'\x25\x45\x56\x45\x4E\x06\x1F\x01\x00\x00\x40\x00\x00\x10{action}{speed}\x00{times}\x01\x00\x00{font_color}\x00\x01{font_ascii}\x02{font_asian}\x5B\x46\x54\x35\x30\x31\x5D\xBE\xC8\xB3\xE7'
         buff_data = bytes(data, encoding='latin-1')
 
@@ -111,7 +201,7 @@ class LED_TEST :
         self.send_text = self.fixed_start_text + buff_data + self.fixed_end_text
         return self.send_text
 
-    def Maual_Event(self, send) :
+    def Maual_Event(self, send):
 
         self.ser.write(bytearray(self.init_event))
         time.sleep(0.1)
