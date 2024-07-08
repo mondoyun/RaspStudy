@@ -17,33 +17,34 @@ program_id = b'\x00\x00\x00\x00\x00'
 class ProtocolPacket:
     
     def __init__(self, Data_length, Cmd_event, Sub_Cmd_ID, len):
-
         self.Data_length = Data_length
         self.Cmd_event = Cmd_event
         self.Sub_Cmd_ID = Sub_Cmd_ID
         self.len = len
     
     def packet_start(self):
-
         self.Head_of_Frame = Head_of_Frame
         self.Screen_ID = Screen_ID
-        return Head_of_Frame + Screen_ID
+        self.start_text = Head_of_Frame + Screen_ID
+        return self.start_text
 
     def packet_end(self):
-
         self.crc = crc
         self.eof = eof
-        return crc + eof    
+        self.end_text = crc + eof
+        return self.end_text    
     
     def power_ondata(self):
         Sub_Cmd_ID = b'\x02'   
         self.program_id = program_id
-        return Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+        self.on_text = Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+        return self.on_text
     
     def power_offdata(self): 
         Sub_Cmd_ID = b'\x03'
         self.program_id = program_id
-        return Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+        self.off_text = Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+        return self.off_text
     # -------------------------------------------------------------------------------------------------------------------
     def init_event(self, program_id = b'\x04\x00'):
         Data_length = b'\x00\x08'
@@ -51,7 +52,8 @@ class ProtocolPacket:
         Sub_Cmd_ID = b'\x01'
         len = b'\x02'
         self.program_id = program_id
-        return Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+        self.init_text = Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+        return self.init_text
     
     def send_text(self, Windows_Number = b'\x01', X_POSITION = b'\x00\x00',W_WIDTH_PIXELS = b'\x40\x00',
                     Y_POSITION = b'\x00', H_HEIGHT_PIXELS = b'\x10', Action = b'\x02', Speed = b'\x00',
@@ -96,7 +98,8 @@ class ProtocolPacket:
 
         self.Reserved_Wnd = Reserved_Wnd
         self.Reserved = Reserved
-        return Data_length + Cmd_event + Sub_Cmd_ID + len + Reserved_Wnd + Reserved
+        self.window_text = Data_length + Cmd_event + Sub_Cmd_ID + len + Reserved_Wnd + Reserved
+        return self.window_text
            
 
     
