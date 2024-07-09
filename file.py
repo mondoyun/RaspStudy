@@ -24,21 +24,22 @@ import time
 
 class Protocol:
     # 패킷통신 - 시작고정값,고정구조
-    def FixedStart(self, HeaderFrame = b'\x7E\x01',ScreenID = b'\xFE\xFE'):
-        self.HeaderFrame = HeaderFrame 
-        self.ScreenID = ScreenID
+    def FixedStart(self, HeaderFrame, ScreenID):
+        self.HeaderFrame = b'\x7E\x01' 
+        self.ScreenID = b'\xFE\xFE'
         self.startFixed = HeaderFrame + ScreenID
+        self.FixedStart()
         return self.startFixed
 
     # 패킷통신 - 끝고정값,고정구조
-    def FixedEnd(self, crc = b'\xFF\xFF', eof = b'\x7E\x00'):
-        self.crc = crc
-        self.eof = eof
+    def FixedEnd(self, crc, eof):
+        self.crc = b'\xFF\xFF'
+        self.eof = b'\x7E\x00'
         self.endFixed = crc + eof
         return self.endFixed
     
     # 패킷통신 - 고정구조,가변데이터 : DataLength, CmdEvent, SubCmdID, Length 
-    def FixedPacket(self,DataLength, CmdEvent, SubCmdID, Length):
+    def FixedPacket(self,DataLength = b'\x00\x0B', CmdEvent = b'\x50\x57\x4F\x4E', SubCmdID = b'\x00', Length = b'\x00'):
 
         self.DataLength = DataLength
         self.CmdEvent = CmdEvent
@@ -48,10 +49,10 @@ class Protocol:
         return self.FixData
     
     # LED 전광판 전원 ON
-    def PowerOn(self):
+    def PowerOn(self,SubCmdID = b'\x02'):
         self.DataLength = b'\x00\x0B'
         self.CmdEvent = b'\x50\x57\x4F\x4E'
-        self.SubCmdID = b'\x02' # 전원 ON
+        self.SubCmdID = SubCmdID # 전원 ON
         self.Length = b'\x00'
         self.program_id = b'\x00\x00\x00\x00\x00'
         self.On = self.startFixed + self.FixData + self.program_id + self.endFixed
@@ -136,7 +137,7 @@ class LED:
     
     # 전광판 켜기
     def open(self):
-        self.serial.write(Protocol.PowerOn)
+        self.serial.write(Protocol.PowerOn(self))
         print("LED 전광판 전원을 켰습니다.")
 
     # 전광판 메세지 초기화
@@ -165,16 +166,16 @@ if __name__ == "__main__":
     # LED 전광판 객체 생성
     Led = LED()
 
-    Led.open  # 전광판 켜기
+    Led.open()  # 전광판 켜기
     time.sleep(2) # 2초 대기
 
-    Led.MsgInit
+    Led.MsgInit()
     time.sleep(2) # 2초 대기
 
-    Led.sendMsgEvent
+    Led.sendMsgEvent()
     time.sleep(2) # 2초 대기
 
-    Led.startMsgWindow
+    Led.startMsgWindow()
     time.sleep(2) # 2초 대기
 
     # LED 전원 끄기
