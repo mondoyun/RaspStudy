@@ -18,31 +18,20 @@
 # #byte_data = ''.join([f'\\x{ord(char):02x}' for char in en_str])
 # # 결과 출력
 # #print(byte_data)
-from file import Protocol
+
 # 한글 문자열
-koneanSTR = '안녕하세요'
+koreanSTR = '공사현장입니다'
 
 # EUC-KR로 인코딩한 바이트 데이터
-encodingByte = koneanSTR.encode('euc-kr')
+encodingByte = koreanSTR.encode('euc-kr')
+print("인코딩데이터 : ", encodingByte)
+encodingBytelen = len(encodingByte)
+print(encodingBytelen)
 hex_representation = ' '.join([f'{byte:02X}' for byte in encodingByte])
-print("인코딩데이터 : ", hex_representation)
-Protocol.self.FixedEventText1() + Protocol.self.sendEventText() + Protocol.self.FixedEventText2() + Protocol.TotalSendEventText()
-# encodingBytelen = len(encodingByte)
-# print("데이터의 길이 : ", encodingBytelen)
-# # 바이트 데이터와 더하기
-# originalByte = b'Some bytes data '
-# originalBytelen = len(originalByte)
-# print("데이터의 길이 : ", originalBytelen)
-# result_bytes = originalByte + encodingByte
-# print("더하기 결과 : ",result_bytes)
-# # 결과의 길이
-# result_length = len(result_bytes)
-# print("더하기 길이 결과 : ", result_length)
-# # 바이트 데이터의 hex 값으로 표시
-# hex_representation = ' '.join([f'{byte:02X}' for byte in result_bytes])
+print(hex_representation)
+bytes_representation = ''.join([f'\\x{byte}' for byte in hex_representation.split()])
+print(bytes_representation)
 
-# # 결과 출력
-# print(f"결과 길이: {result_length} bytes")
-# print(f"16진수로 변환한 값: {hex_representation}")
+
 
 
