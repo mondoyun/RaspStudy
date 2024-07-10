@@ -20,7 +20,11 @@
 # #print(byte_data)
 
 # 한글 문자열
+<<<<<<< HEAD
 koreanSTR = '안녕하세요'
+=======
+koreanSTR = '공사현장입니다'
+>>>>>>> 6092cdeca1a422f3ddfaf1b95f2dcfdd2881bbca
 
 # EUC-KR로 인코딩한 바이트 데이터
 encodingByte = koreanSTR.encode('euc-kr')
@@ -32,6 +36,7 @@ print(hex_representation)
 bytes_representation = ''.join([f'\\x{byte}' for byte in hex_representation.split()])
 print(bytes_representation)
 
+<<<<<<< HEAD
 byte_data = bytes([28])
 print("하이0", byte_data)  
 byte_data1 = b'ddddddddddd'
@@ -41,6 +46,8 @@ byte_data3_len = len(byte_data3)
 print("하이1", byte_data3_len)
 byte_data3_len1 = bytes([byte_data3_len])
 print("하이2", byte_data3_len1)
+=======
+>>>>>>> 6092cdeca1a422f3ddfaf1b95f2dcfdd2881bbca
 
 
 

@@ -29,22 +29,26 @@ class ProtocolPacket:
     def packet_start(self):
         self.Head_of_Frame = Head_of_Frame
         self.Screen_ID = Screen_ID
-        return Head_of_Frame + Screen_ID
+        self.start_text = Head_of_Frame + Screen_ID
+        return self.start_text
 
     def packet_end(self):
         self.crc = crc
         self.eof = eof
-        return crc + eof    
+        self.end_text = crc + eof
+        return self.end_text    
     
     def power_ondata(self):
         Sub_Cmd_ID = b'\x02'   
         self.program_id = program_id
-        return Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+        self.on_text = Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+        return self.on_text
     
     def power_offdata(self): 
         Sub_Cmd_ID = b'\x03'
         self.program_id = program_id
-        return Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+        self.off_text = Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+        return self.off_text
     
     def init_event(self, program_id = b'\x04\x00'):
         Data_length = b'\x00\x08'
@@ -52,7 +56,8 @@ class ProtocolPacket:
         Sub_Cmd_ID = b'\x01'
         len = b'\x02'
         self.program_id = program_id
-        return Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+        self.init_text = Data_length + Cmd_event + Sub_Cmd_ID + len + program_id
+        return self.init_text
     
     def send_text(self, Windows_Number = b'\x01', X_POSITION = b'\x00\x00',W_WIDTH_PIXELS = b'\x40\x00',
                     Y_POSITION = b'\x00', H_HEIGHT_PIXELS = b'\x10', Action = b'\x02', Speed = b'\x00',
@@ -60,7 +65,7 @@ class ProtocolPacket:
                     Align = b'\x00', font_Color = b'\x01', Reserved_Font_Mode = b'\x00',
                     font_ascii = b'\x01\x00', font_asian = b'\x02\x00',
                     Data = b'\x5B\x46\x54\x35\x30\x31\x5D\xBE\xC8\xB3\xE7\xC7\xCF\xBC\xBC\xBF\xE4'):
-        
+
         Data_length = b'\x00\x2B'
         Cmd_event = b'\x45\x56\x45\x4E'
         Sub_Cmd_ID= b'\x06'
@@ -82,13 +87,12 @@ class ProtocolPacket:
         self.font_ascii = font_ascii
         self.font_asian = font_asian
         self.Data = Data
-        Full_Data = (Data_length + Cmd_event + Sub_Cmd_ID + len + Windows_Number +
+        self.Full_Data = (Data_length + Cmd_event + Sub_Cmd_ID + len + Windows_Number +
                      X_POSITION + W_WIDTH_PIXELS + Y_POSITION + H_HEIGHT_PIXELS + 
                      Action + Speed + Stay_Seconds + Loop_Times + Memory_Position + Multi_Lines_Disp + 
                      Align + font_Color + Reserved_Font_Mode + font_ascii + font_asian + Data)
-        
-        return Full_Data
-    
+        return self.Full_Data
+
     def print_windows(self, Reserved_Wnd = b'\xFF', Reserved = b'\x00'):
 
         Data_length = b'\x00\x08'
@@ -98,7 +102,8 @@ class ProtocolPacket:
 
         self.Reserved_Wnd = Reserved_Wnd
         self.Reserved = Reserved
-        return Data_length + Cmd_event + Sub_Cmd_ID + len + Reserved_Wnd + Reserved
+        self.window_text = Data_length + Cmd_event + Sub_Cmd_ID + len + Reserved_Wnd + Reserved
+        return self.window_text
     
 class LED:
 
@@ -124,15 +129,16 @@ class LED:
     def send_message(self):
         # 메세지 보내는 명령 전송
         send_text = ProtocolPacket.packet_start(self) + ProtocolPacket.send_text(self) + ProtocolPacket.packet_end(self)
+        # send_text = ProtocolPacket.send_text(self)
         self.serial.write(send_text)
-        print(send_text)
-        print("LED 전광판 버퍼에 메세지를 보냈습니다.")
-
+        buff_text = send_text.decode('latin-1')
+        print("LED 전광판 버퍼에 메세지를 보냈습니다.", buff_text)
+        
     def message_display(self):
         # 메세지 출력
         send_display = ProtocolPacket.packet_start(self) + ProtocolPacket.print_windows(self) + ProtocolPacket.packet_end(self)
         self.serial.write(send_display)
-        print("LED 전광판에 메세지를 출력합니다.")
+        
 
     def turn_off(self):
         # 전원을 끄는 명령 전송
@@ -161,6 +167,7 @@ if __name__ == "__main__":
 
         # 메세지 출력
         LED.message_display()
+        print("LED 전광판에 메세지를 출력합니다.")
         time.sleep(2) # 2초 대기
 
         # LED 전원 끄기

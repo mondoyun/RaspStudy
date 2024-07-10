@@ -1,5 +1,5 @@
 print(__name__)
-from led_protocol import ProtocolPacket
+from protocol import ProtocolPacket
 import serial
 
 # serial 통신 초기값

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # # LED 객체의 기능
 # # 기능 : 메세지 전송 
 
@@ -223,6 +224,8 @@
 #     time.sleep(2) # 2초 대기
 
 #     Led.close() # 시리얼 포트 닫기
+=======
+>>>>>>> 6092cdeca1a422f3ddfaf1b95f2dcfdd2881bbca
 # LED 객체의 기능
 # 기능 : 메세지 전송 
 
@@ -332,6 +335,7 @@ class Protocol:
     
     # 최종 보낼 메세지
     def TotalSendEventText(self, DataLength = b'\x00\x2B', Length = b'\x25', Data = b'\x02\x00\x5B\x46\x54\x35\x30\x31\x5D\xBE\xC8\xB3\xE7\xC7\xCF\xBC\xBC\xBF\xE4'):
+<<<<<<< HEAD
         b'\xBE\xC8\xB3\xE7\xC7\xCF\xBC\xBC\xBF\xE4'
         self.DataLength = bytes([self.CmdEvent + self.SubCmdID + self.Length + self.sendTexts + self.Data]) # 가변 데이터 # 5,6
         self.CmdEvent = b'\x45\x56\x45\x4E' # 7,8,9,10
@@ -341,6 +345,16 @@ class Protocol:
         self.sendTexts = self.FixedEventText1() + self.sendEventText() + self.FixedEventText2()
         self.Data = Data # 가변 데이터 #31        
         return self.FixedStart() + self.DataLength + self.CmdEvent + self.SubCmdID + self.Length + self.sendTexts + self.Data + self.FixedEnd()
+=======
+        self.DataLength = DataLength # 가변 데이터 # 5,6
+        self.CmdEvent = b'\x45\x56\x45\x4E' # 7,8,9,10
+        self.SubCmdID = b'\x06' # 이벤트 메세지 전송 # 11
+        self.Length = Length # 가변 데이터 # 12
+        self.testData = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length 
+        self.sendTexts = self.FixedEventText1() + self.sendEventText() + self.FixedEventText2()
+        self.Data = Data # 가변 데이터 #31        
+        return self.FixedStart() + self.testData + self.sendTexts + self.Data + self.FixedEnd()
+>>>>>>> 6092cdeca1a422f3ddfaf1b95f2dcfdd2881bbca
     
     # 화면출력
     def startWindows(self):
@@ -457,6 +471,7 @@ if __name__ == "__main__":
     
     
 
+<<<<<<< HEAD
 
 
 
@@ -466,3 +481,5 @@ if __name__ == "__main__":
     
     
 
+=======
+>>>>>>> 6092cdeca1a422f3ddfaf1b95f2dcfdd2881bbca
