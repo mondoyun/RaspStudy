@@ -112,10 +112,9 @@ class Protocol:
         self.SubCmdID = b'\x06' # 이벤트 메세지 전송 # 11
         self.Length = Length # 가변 데이터 # 12
         self.testData = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length 
-        self.Data = Data # 가변 데이터 #31
-        self.DataLength = self.CmdEvent + self.SubCmdID
-        self.Lengths = self.FixedEventText1() + self.sendEventText() + self.FixedEventText2()
-        return self.FixedStart() + self.testData + self.Lengths + self.Data + self.FixedEnd()
+        self.sendTexts = self.FixedEventText1() + self.sendEventText() + self.FixedEventText2()
+        self.Data = Data # 가변 데이터 #31        
+        return self.FixedStart() + self.testData + self.sendTexts + self.Data + self.FixedEnd()
     
     # 화면출력
     def startWindows(self):
