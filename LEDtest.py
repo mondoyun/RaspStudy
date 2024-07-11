@@ -1,24 +1,4 @@
-# LED 객체의 기능
-# 기능 : 메세지 전송 
-
-# Windows_Number -15
-# X_POSITION - 16
-# W_WIDTH_PIXELS - 17
-# Y_POSITION - 18
-# H_HEIGHT_PIXELS - 19
-# Action - 20
-# Speed - 21
-# Stay_Seconds -
-# Loop_Times -
-# Memory_Position 
-# Multi_Lines_Disp 
-# Align 
-# font_Color -
-# Reserved_Font_Mode 
-# font_ascii 
-# font_asian 
-# Data -
-
+from inputData import KoreanSTR
 import serial
 import time
 
@@ -105,16 +85,21 @@ class Protocol:
         self.testData4 = self.testData3 + self.fontColor + self.ReservedFontMode + self.FontAscii + self.FontAsian
         return self.testData4
     
-    def TotalSendEventText(self, DataLength = b'\x00\x35', Length = b'\x2f', InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D',
-                           UserInputData = b'\xbe\xee\xb6\xbb\xb0\xd4\xc7\xd4\xbc\xf6\xb8\xa6\xbf\xac\xb0\xe1\xc7\xd2\xb1\xee'):
+    def TotalSendEventText(self, DataLength = b'\x00\x35', Length = b'\x2f'):
         self.DataLength = DataLength # 가변 데이터 # 5,6
         self.CmdEvent = b'\x45\x56\x45\x4E' # 7,8,9,10
         self.SubCmdID = b'\x06' # 이벤트 메세지 전송 # 11
         self.Length = Length # 가변 데이터 # 12
         self.testData = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length 
         self.sendTexts = self.FixedEventText1() + self.sendEventText() + self.FixedEventText2()
-        self.InputFixData = InputFixData #31   
-        self.UserInputData = UserInputData # 사용자 입력데이터 #32        
+        self.InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D' #31
+        Kstring = input("입력하세요 : ")
+        print("한국어 : ",Kstring)
+        kstr = KoreanSTR(Kstring)
+        encodingByte = kstr.encodeing()
+        print("타입 : ", type(encodingByte))
+        print("결과 : ", encodingByte)
+        self.UserInputData = encodingByte # 사용자 입력데이터 #32 
         return self.FixedStart() + self.testData + self.sendTexts + self.InputFixData + self.UserInputData + self.FixedEnd()
     
     # 화면출력

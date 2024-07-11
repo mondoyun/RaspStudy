@@ -1,3 +1,12 @@
+from file import Protocol
+import serial
+# Kstring = input("입력하세요 : ")
+# print("한국어 : ",Kstring)
+# kstr = KoreanSTR(Kstring)
+# encodingByte = kstr.encodeing()
+# print("타입 : ", type(encodingByte))
+# print("결과 : ", encodingByte)
+# self.UserInputData = encodingByte # 사용자 입력데이터 #32  
 # 이벤트 전송 메세지
 DataLength = b'\x00\x2B' # 가변 데이터 # 5,6
 CmdEvent = b'\x45\x56\x45\x4E' # 7,8,9,10
