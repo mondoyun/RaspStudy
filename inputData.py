@@ -6,10 +6,10 @@ class KoreanSTR:
         return self.string.encode('euc-kr')
     
 if __name__ == "__main__":
-    pass
-    # Kstring = input("입력하세요 : ")
-    # print("한국어 : ",Kstring)
-    # kstr = KoreanSTR(Kstring)
-    # encodingByte = kstr.encodeing()
-    # print("타입 : ", type(encodingByte))
-    # print("결과 : ", encodingByte)
+    
+    Kstring = input("입력하세요 : ")
+    print("한국어 : ",Kstring)
+    kstr = KoreanSTR(Kstring)
+    encodingByte = kstr.encodeing()
+    print("타입 : ", type(encodingByte))
+    print("결과 : ", encodingByte)
