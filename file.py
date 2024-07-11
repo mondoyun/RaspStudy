@@ -85,6 +85,7 @@ class Protocol:
         self.testData4 = self.testData3 + self.fontColor + self.ReservedFontMode + self.FontAscii + self.FontAsian
         return self.testData4
     
+    # 사용자가 보낼 메세지
     def TotalSendEventText(self, DataLength = b'\x00\x35', Length = b'\x2f'):
         self.DataLength = DataLength # 가변 데이터 # 5,6
         self.CmdEvent = b'\x45\x56\x45\x4E' # 7,8,9,10
