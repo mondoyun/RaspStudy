@@ -100,21 +100,22 @@ class Protocol:
         self.testData3 = self.MemoryPosition + self.MultiLinesDisp + self.Align
         self.fontColor = fontColor # 가변 데이터 #27
         self.ReservedFontMode = b'\x00' #28
-        self.FontAscii = b'\x01' #29
-        self.FontAsian = b'\x00' #30 
+        self.FontAscii = b'\x01\x00' #29
+        self.FontAsian = b'\x02\x00' #30 
         self.testData4 = self.testData3 + self.fontColor + self.ReservedFontMode + self.FontAscii + self.FontAsian
         return self.testData4
     
-    # 최종 보낼 메세지
-    def TotalSendEventText(self, DataLength = b'\x00\x2B', Length = b'\x25', Data = b'\x02\x00\x5B\x46\x54\x35\x30\x31\x5D\xBE\xC8\xB3\xE7\xC7\xCF\xBC\xBC\xBF\xE4'):
+    def TotalSendEventText(self, DataLength = b'\x00\x35', Length = b'\x2f', InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D',
+                           UserInputData = b'\xbe\xee\xb6\xbb\xb0\xd4\xc7\xd4\xbc\xf6\xb8\xa6\xbf\xac\xb0\xe1\xc7\xd2\xb1\xee'):
         self.DataLength = DataLength # 가변 데이터 # 5,6
         self.CmdEvent = b'\x45\x56\x45\x4E' # 7,8,9,10
         self.SubCmdID = b'\x06' # 이벤트 메세지 전송 # 11
         self.Length = Length # 가변 데이터 # 12
         self.testData = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length 
         self.sendTexts = self.FixedEventText1() + self.sendEventText() + self.FixedEventText2()
-        self.Data = Data # 가변 데이터 #31        
-        return self.FixedStart() + self.testData + self.sendTexts + self.Data + self.FixedEnd()
+        self.InputFixData = InputFixData #31   
+        self.UserInputData = UserInputData # 사용자 입력데이터 #32        
+        return self.FixedStart() + self.testData + self.sendTexts + self.InputFixData + self.UserInputData + self.FixedEnd()
     
     # 화면출력
     def startWindows(self):

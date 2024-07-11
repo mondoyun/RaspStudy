@@ -61,7 +61,7 @@ class LED_TEST :
     # W WIDTH PIXELS = 40 00
     # Y POSITION = 00 
     # H HEIGHT PIXELS = 10
-    # Action = 01
+    # Action = 01 
     # Speed of Rotate = 00
     # Stay Seconds = 00
     # Loop Times = 00
