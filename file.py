@@ -100,7 +100,7 @@ class EventLength:
         byte2 = numA.to_bytes(1, byteorder='big')
         self.length = byte2                                 # length를 byte2값으로 구함
         return self.length
-#--------------------------------------------------------------------------------------------
+
     # DataLength 구하기
     def DataLengthFind(self):
         DataLength = self.CmdEvent + self.SubCmdID + self.LengthFind()
@@ -109,7 +109,7 @@ class EventLength:
         byte1 = numB.to_bytes(2, byteorder='big')                  
         datalength = byte1                                   # datalength를 byte1값으로 구함
         return datalength
-    
+#--------------------------------------------------------------------------------------------
     # 사용자가 보낼 메세지
     def TotalSendEventText(self):
         self.CmdEvent = b'\x45\x56\x45\x4E' # 7,8,9,10
