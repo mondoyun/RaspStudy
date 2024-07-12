@@ -70,7 +70,7 @@ class Protocol:
         return self.testData2
     
     # 이벤트텍스트전송 고정값2
-    def FixedEventText2(self,fontColor = b'\x01'):
+    def FixedEventText2(self,fontColor = b'\x02'):
         self.MemoryPosition = b'\x01' #24
         self.MultiLinesDisp = b'\x00' #25
         self.Align = b'\x00' # 26
@@ -92,7 +92,7 @@ class EventLength:
         kstr =input("입력하세요 : ")
         UserInputData = KoreanSTR(kstr)
         self.UserInputData = UserInputData.encodeing() 
-        
+
     # Length 구하기
     def LengthFind(self):
         self.sendtext = self.fixed.FixedEventText1() + self.fixed.sendEventText() + self.fixed.FixedEventText2()
@@ -104,24 +104,22 @@ class EventLength:
 
     # DataLength 구하기
     def DataLengthFind(self):
-        DataLength = self.CmdEvent + self.SubCmdID + self.LengthFind()
+        DataLength = self.CmdEvent + self.SubCmdID + self.LengthFind() + self.sendtext + self.InputFixData + self.UserInputData
         num2 = len(DataLength)                            # DataLength 길이
         byte1 = num2.to_bytes(2, byteorder='big')                  
-        datalength = byte1                                   # datalength를 byte1값으로 구함
-        return datalength
+        self.datalength = byte1                                   # datalength를 byte1값으로 구함
+        return self.datalength
     
     # 사용자가 보낼 메세지
-    def TotalSendEventText(self, DataLength = b'\x00\x25', Length = b'\x1f'):
+    def TotalSendEventText(self):
         self.CmdEvent = b'\x45\x56\x45\x4E' # 7,8,9,10
         self.SubCmdID = b'\x06'             # 이벤트 메세지 전송 # 11  
-        # self.DataLength = self.DataLengthFind()        # 5,6
-        # self.Length = self.LengthFind()                # 12
-        self.DataLength = DataLength
-        self.Length = Length
-        self.testData = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length 
+        self.DataLength = self.DataLengthFind()        # 5,6
+        self.Length = self.LengthFind()                  # 12
+        self.testData = self.CmdEvent + self.SubCmdID + self.Length 
         self.sendtext = self.fixed.FixedEventText1() + self.fixed.sendEventText() + self.fixed.FixedEventText2()
         self.InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D' #31  
-        return self.fixed.FixedStart() + self.testData + self.sendtext + self.InputFixData + self.UserInputData + self.fixed.FixedEnd()
+        return self.fixed.FixedStart() + self.DataLength + self.testData + self.sendtext + self.InputFixData + self.UserInputData + self.fixed.FixedEnd()
                                  #1234           #5~12   # 13
     # 화면출력
     def startWindows(self):
