@@ -89,6 +89,7 @@ class EventLength:
         self.SubCmdID = b'\x06' # 이벤트 메세지 전송 # 11
         self.InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D' #31
         self.fixed = Protocol()
+        UserInputData = KoreanSTR(input("입력하세요 : "))
         self.UserInputData = UserInputData.encodeing()
 #--------------------------------------------------------------------------------------------
     # Length 구하기
@@ -100,7 +101,7 @@ class EventLength:
         byte2 = numA.to_bytes(1, byteorder='big')
         self.length = byte2                                 # length를 byte2값으로 구함
         return self.length
-#--------------------------------------------------------------------------------------------
+
     # DataLength 구하기
     def DataLengthFind(self):
         DataLength = self.CmdEvent + self.SubCmdID + self.LengthFind()
@@ -109,17 +110,16 @@ class EventLength:
         byte1 = numB.to_bytes(2, byteorder='big')                  
         datalength = byte1                                   # datalength를 byte1값으로 구함
         return datalength
-    
+#--------------------------------------------------------------------------------------------
     # 사용자가 보낼 메세지
     def TotalSendEventText(self):
         self.CmdEvent = b'\x45\x56\x45\x4E' # 7,8,9,10
         self.SubCmdID = b'\x06' # 이벤트 메세지 전송 # 11  
-        self.Lengthfind = EventLength() # bytelengthconverter에서 DataLength,Length값을 불러옴
-        self.testData = self.Lengthfind.DataLengthFind() + self.CmdEvent + self.SubCmdID + self.Lengthfind.LengthFind() 
+        self.testData = self.DataLengthFind() + self.CmdEvent + self.SubCmdID + self.LengthFind() 
         self.sendtext = self.fixed.FixedEventText1() + self.fixed.sendEventText() + self.fixed.FixedEventText2()
         self.InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D' #31  
-        return self.fixed.FixedStart() + self.testData + self.InputFixData + self.UserInputData + self.fixed.FixedEnd()
-    
+        return self.fixed.FixedStart() + self.testData + self.sendtext + self.InputFixData + self.UserInputData + self.fixed.FixedEnd()
+                                 #1234           #5~12   # 13
     # 화면출력
     def startWindows(self):
         self.DataLength = b'\x00\x08'
@@ -170,7 +170,7 @@ class LED:
     def sendMsgEvent(self):
         LEDsendMsgEvent = self.EVNprotocol.TotalSendEventText()
         self.serial.write(LEDsendMsgEvent)
-        temp = self.serial.read(20) # 데이터 전송 테스트
+        temp = self.serial.read(40) # 데이터 전송 테스트
         print(temp)
         print("LED 전광판 버퍼에 메세지를 보냈습니다.")
 
@@ -178,7 +178,7 @@ class LED:
     def startMsgWindow(self):
         LEDstartWindow = self.EVNprotocol.startWindows()
         self.serial.write(LEDstartWindow)
-        temp = self.serial.read(20) # 데이터 전송 테스트
+        temp = self.serial.read(40) # 데이터 전송 테스트
         print(temp)
         print("LED 전광판에 메세지를 출력합니다.")   
 
@@ -186,7 +186,7 @@ class LED:
     def ClsBUF(self):
         LEDclsBUF = self.EVNprotocol.ClearBuffer()
         self.serial.write(LEDclsBUF)
-        temp = self.serial.read(20) # 데이터 전송 테스트
+        temp = self.serial.read(40) # 데이터 전송 테스트
         print(temp)
         print("LED 전광판 버퍼에 메세지를 삭제했습니다.")
 
@@ -205,7 +205,6 @@ class LED:
 
 
 if __name__ == "__main__":
-    UserInputData = KoreanSTR(input("입력하세요 : "))
     Led = LED() # LED 전광판 객체 생성
 
     Led.PowerON() # 전광판 켜기
@@ -214,7 +213,7 @@ if __name__ == "__main__":
     Led.MsgInit() # 메세지 초기화
     time.sleep(2) # 2초 대기
 
-    Led.sendMsgEvent() #메세지 버퍼에 전송
+    Led.sendMsgEvent() # 메세지 버퍼에 전송
     time.sleep(2) # 2초 대기
 
     Led.startMsgWindow() # 메세지 출력

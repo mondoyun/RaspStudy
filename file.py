@@ -89,6 +89,7 @@ class EventLength:
         self.SubCmdID = b'\x06' # 이벤트 메세지 전송 # 11
         self.InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D' #31
         self.fixed = Protocol()
+        UserInputData = KoreanSTR(input("입력하세요 : "))
         self.UserInputData = UserInputData.encodeing()
 #--------------------------------------------------------------------------------------------
     # Length 구하기
@@ -114,12 +115,11 @@ class EventLength:
     def TotalSendEventText(self):
         self.CmdEvent = b'\x45\x56\x45\x4E' # 7,8,9,10
         self.SubCmdID = b'\x06' # 이벤트 메세지 전송 # 11  
-        self.Lengthfind = EventLength() # bytelengthconverter에서 DataLength,Length값을 불러옴
-        self.testData = self.Lengthfind.DataLengthFind() + self.CmdEvent + self.SubCmdID + self.Lengthfind.LengthFind() 
+        self.testData = self.DataLengthFind() + self.CmdEvent + self.SubCmdID + self.LengthFind() 
         self.sendtext = self.fixed.FixedEventText1() + self.fixed.sendEventText() + self.fixed.FixedEventText2()
         self.InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D' #31  
-        return self.fixed.FixedStart() + self.testData + self.InputFixData + self.UserInputData + self.fixed.FixedEnd()
-    
+        return self.fixed.FixedStart() + self.testData + self.sendtext + self.InputFixData + self.UserInputData + self.fixed.FixedEnd()
+                                 #1234           #5~12   # 13
     # 화면출력
     def startWindows(self):
         self.DataLength = b'\x00\x08'
@@ -205,7 +205,6 @@ class LED:
 
 
 if __name__ == "__main__":
-    UserInputData = KoreanSTR(input("입력하세요 : "))
     Led = LED() # LED 전광판 객체 생성
 
     Led.PowerON() # 전광판 켜기
@@ -214,7 +213,7 @@ if __name__ == "__main__":
     Led.MsgInit() # 메세지 초기화
     time.sleep(2) # 2초 대기
 
-    Led.sendMsgEvent() #메세지 버퍼에 전송
+    Led.sendMsgEvent() # 메세지 버퍼에 전송
     time.sleep(2) # 2초 대기
 
     Led.startMsgWindow() # 메세지 출력
