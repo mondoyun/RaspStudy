@@ -89,7 +89,7 @@ class EventLength:
         self.SubCmdID = b'\x06' # 이벤트 메세지 전송 # 11
         self.InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D' #31
         self.fixed = Protocol()
-        kstr =input("입력하세요 : ")
+        kstr = input("입력하세요 : ")
         UserInputData = KoreanSTR(kstr)
         self.UserInputData = UserInputData.encodeing() 
 
@@ -107,7 +107,7 @@ class EventLength:
         DataLength = self.CmdEvent + self.SubCmdID + self.LengthFind() + self.sendtext + self.InputFixData + self.UserInputData
         num2 = len(DataLength)                            # DataLength 길이
         byte1 = num2.to_bytes(2, byteorder='big')                  
-        self.datalength = byte1                                   # datalength를 byte1값으로 구함
+        self.datalength = byte1                           # datalength를 byte1값으로 구함
         return self.datalength
     
     # 사용자가 보낼 메세지
@@ -120,7 +120,7 @@ class EventLength:
         self.sendtext = self.fixed.FixedEventText1() + self.fixed.sendEventText() + self.fixed.FixedEventText2()
         self.InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D' #31  
         return self.fixed.FixedStart() + self.DataLength + self.testData + self.sendtext + self.InputFixData + self.UserInputData + self.fixed.FixedEnd()
-                                 #1234           #5~12   # 13
+                            
     # 화면출력
     def startWindows(self):
         self.DataLength = b'\x00\x08'
@@ -163,47 +163,36 @@ class LED:
     def MsgInit(self):
         LEDinit = self.protocol.InitEventMemory()
         self.serial.write(LEDinit)
-        temp = self.serial.read(20) # 데이터 전송 테스트
-        print(temp)
         print("LED 전광판을 초기화했습니다.")
 
     # 전광판 메세지 전송(버퍼)
     def sendMsgEvent(self):
         LEDsendMsgEvent = self.EVNprotocol.TotalSendEventText()
         self.serial.write(LEDsendMsgEvent)
-        temp = self.serial.read(40) # 데이터 전송 테스트
-        print(temp)
         print("LED 전광판 버퍼에 메세지를 보냈습니다.")
 
     # 전광판 메세지 화면출력
     def startMsgWindow(self):
         LEDstartWindow = self.EVNprotocol.startWindows()
         self.serial.write(LEDstartWindow)
-        temp = self.serial.read(40) # 데이터 전송 테스트
-        print(temp)
         print("LED 전광판에 메세지를 출력합니다.")   
 
     # 전광판 버퍼 삭제
     def ClsBUF(self):
         LEDclsBUF = self.EVNprotocol.ClearBuffer()
         self.serial.write(LEDclsBUF)
-        temp = self.serial.read(40) # 데이터 전송 테스트
-        print(temp)
         print("LED 전광판 버퍼에 메세지를 삭제했습니다.")
 
     # 전광판 끄기
     def PowerOFF(self):
         ledOff = self.protocol.PowerOFF()
         self.serial.write(ledOff)
-        temp = self.serial.read(20) # 데이터 전송 테스트
-        print(temp)
         print("LED 전광판 전원을 껐습니다.")
 
     # 시리얼 포트 닫기
     def close(self):
         self.serial.close()
         print("serial포트를 닫았습니다.")
-
 
 if __name__ == "__main__":
     Led = LED() # LED 전광판 객체 생성
@@ -227,11 +216,3 @@ if __name__ == "__main__":
     time.sleep(1) # 2초 대기
 
     Led.close() # 시리얼 포트 닫기
-
-
-
-
-    
-    
-    
-
