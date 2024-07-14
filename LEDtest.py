@@ -1,24 +1,4 @@
-# LED 객체의 기능
-# 기능 : 메세지 전송 
-
-# Windows_Number -15
-# X_POSITION - 16
-# W_WIDTH_PIXELS - 17
-# Y_POSITION - 18
-# H_HEIGHT_PIXELS - 19
-# Action - 20
-# Speed - 21
-# Stay_Seconds -
-# Loop_Times -
-# Memory_Position 
-# Multi_Lines_Disp 
-# Align 
-# font_Color -
-# Reserved_Font_Mode 
-# font_ascii 
-# font_asian 
-# Data -
-
+from inputData import KoreanSTR
 import serial
 import time
 
@@ -100,21 +80,27 @@ class Protocol:
         self.testData3 = self.MemoryPosition + self.MultiLinesDisp + self.Align
         self.fontColor = fontColor # 가변 데이터 #27
         self.ReservedFontMode = b'\x00' #28
-        self.FontAscii = b'\x01' #29
-        self.FontAsian = b'\x00' #30 
+        self.FontAscii = b'\x01\x00' #29
+        self.FontAsian = b'\x02\x00' #30 
         self.testData4 = self.testData3 + self.fontColor + self.ReservedFontMode + self.FontAscii + self.FontAsian
         return self.testData4
     
-    # 최종 보낼 메세지
-    def TotalSendEventText(self, DataLength = b'\x00\x2B', Length = b'\x25', Data = b'\x02\x00\x5B\x46\x54\x35\x30\x31\x5D\xBE\xC8\xB3\xE7\xC7\xCF\xBC\xBC\xBF\xE4'):
+    def TotalSendEventText(self, DataLength = b'\x00\x35', Length = b'\x2f'):
         self.DataLength = DataLength # 가변 데이터 # 5,6
         self.CmdEvent = b'\x45\x56\x45\x4E' # 7,8,9,10
         self.SubCmdID = b'\x06' # 이벤트 메세지 전송 # 11
         self.Length = Length # 가변 데이터 # 12
         self.testData = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length 
         self.sendTexts = self.FixedEventText1() + self.sendEventText() + self.FixedEventText2()
-        self.Data = Data # 가변 데이터 #31        
-        return self.FixedStart() + self.testData + self.sendTexts + self.Data + self.FixedEnd()
+        self.InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D' #31
+        Kstring = input("입력하세요 : ")
+        print("한국어 : ",Kstring)
+        kstr = KoreanSTR(Kstring)
+        encodingByte = kstr.encodeing()
+        print("타입 : ", type(encodingByte))
+        print("결과 : ", encodingByte)
+        self.UserInputData = encodingByte # 사용자 입력데이터 #32 
+        return self.FixedStart() + self.testData + self.sendTexts + self.InputFixData + self.UserInputData + self.FixedEnd()
     
     # 화면출력
     def startWindows(self):

@@ -1,4 +1,3 @@
-
 from inputData import KoreanSTR
 
 # Kstring = input("입력하세요 : ")
@@ -38,6 +37,7 @@ sendTexts = (Windows_Number+X_POSITION+W_WIDTH_PIXELS+Y_POSITION+H_HEIGHT_PIXELS
 Kstring = input("입력하세요 : ")
 print("한국어 : ",Kstring)
 kstr = KoreanSTR(Kstring)
+
 encodingByte = kstr.encodeing()                     # 문자열 인코딩
 print("타입 : ",type(encodingByte))                 # 인코딩된 데이터 타입 - byte
 UserInputData = encodingByte
@@ -78,3 +78,34 @@ print("변환된 DataLength STR타입 : ",type(formatted1))      # DataLength �
 print("변환된 DataLength STR값 : ", formatted1)             # DataLength 길이 str값
 print()
 
+encodingByte = kstr.encodeing()
+print("타입 : ",type(encodingByte))
+UserInputData = encodingByte
+# led = Protocol()
+# sendtext = led.FixedEventText1() + led.sendEventText() + led.FixedEventText2()
+DataLength = CmdEvent + SubCmdID + Length + sendTexts + InputFixData + UserInputData
+num2 = len(DataLength)
+print()
+print("DataLength의 길이 : ",num2)
+print("DataLength의 타입 : ",type(num2))
+numB = num2
+byte1 = numB.to_bytes(2, byteorder='big')
+print("변환된 DataLength 타입 : ",type(byte1))
+print("변환된 DataLength 값 : ",byte1)
+print()
+formatted1 = ''.join(f'\\x{byte:02x}' for byte in byte1)
+print("변환된 DataLength 타입 : ",type(formatted1))
+print("변환된 DataLength 값 : ", formatted1)
+print()
+num = sendTexts + InputFixData + UserInputData
+num1 = len(sendTexts + InputFixData + UserInputData)
+print("Length 길이 : ",num1)
+print("Length 타입 : ",type(num1))
+numA = num1
+byte2 = numA.to_bytes(1, byteorder='big')
+print("변환된 Length 타입1 : ",type(byte2))
+print("변환된 Length 값1 : ",byte2)
+print()
+formatted2 = ''.join(f'\\x{byte:02x}' for byte in byte2)
+print("변환된 Length 타입2 : ",type(formatted2))
+print("변환된 Length 값2 : ", formatted2)
