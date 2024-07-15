@@ -1,24 +1,25 @@
 from LEDSerial import LED
 import time
+import cv2
 
 if __name__ == "__main__":
-    Led = LED() # LED 전광판 객체 생성
-    Led.PowerON() # 전광판 켜기
-    time.sleep(1) # 2초 대기
+    Led = LED("/dev/ttyUSB0", 57600, 1) # LED 전광판 객체 생성
 
-    Led.MsgInit() # 메세지 초기화
-    time.sleep(1) # 2초 대기
+    Led.PowerONandMsgInit()             # 전광판 켜기
+    time.sleep(1)                       # 2초 대기
 
-    Led.sendMsgEvent() # 메세지 버퍼에 전송
-    time.sleep(3) # 2초 대기
+    while(1):
+        Led.InputMSG()                      # 메세지 입력
+        time.sleep(3)                       # 2초 대기   
 
-    Led.startMsgWindow() # 메세지 출력
-    time.sleep(3) # 2초 대기
+        Led.startdisplay()                  # 메세지 출력
+        time.sleep(3)                       # 2초 대기 
+        # key = "q"
+        # if key == 'q':
+        #     break
+        if cv2.waitKey(1) == ord('q'):
+            break
+    Led.ClsBUFandOFF()                  # 버퍼 삭제 및 종료
+    time.sleep(1)                       # 2초 대기
 
-    Led.ClsBUF() # 버퍼 삭제
-    time.sleep(1) # 2초 대기
-
-    Led.PowerOFF() # LED 전원 끄기
-    time.sleep(1) # 2초 대기
-
-    Led.close() # 시리얼 포트 닫기
+    Led.close()                         # 시리얼 포트 닫기
