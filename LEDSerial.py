@@ -1,10 +1,10 @@
 import serial
 from LEDPacket import Protocol 
 from LEDPacket import MSGProtocol
-
+import time
 class LED:
     # 시리얼 통신 - 번호, 속도, 타임아웃 "/dev/ttyUSB0"
-    def __init__(self, PortNum = "COM3", baud = 57600, timeout = 1):
+    def __init__(self, PortNum = "/dev/ttyUSB0", baud = 57600, timeout = 1):
         self.portNume = PortNum
         self.baud = baud
         self.timeout = timeout
@@ -25,7 +25,13 @@ class LED:
 
     # 전광판 메세지 전송(버퍼)
     def sendMsgEvent(self):
+
+        start_time = time.time() # 시작시간
         LEDsendMsgEvent = self.EVNMSG.TotalSendEventText()
+        end_time = time.time()   # 종료시간
+        
+        execution_time = end_time - start_time
+        print(f"실행시간: {execution_time} seconds")
         self.serial.write(LEDsendMsgEvent)
         print("LED 전광판 버퍼에 메세지를 보냈습니다.")
 
