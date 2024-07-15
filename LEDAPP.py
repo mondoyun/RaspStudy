@@ -12,13 +12,12 @@ if __name__ == "__main__":
         Led.InputMSG()                      # 메세지 입력
         time.sleep(3)                       # 2초 대기   
 
+        if Led.eventMSG.UsersendMSG[0] == ord('q'):
+            break
+        
         Led.startdisplay()                  # 메세지 출력
         time.sleep(3)                       # 2초 대기 
-        # key = "q"
-        # if key == 'q':
-        #     break
-        if cv2.waitKey(1) == ord('q'):
-            break
+
     Led.ClsBUFandOFF()                  # 버퍼 삭제 및 종료
     time.sleep(1)                       # 2초 대기
 

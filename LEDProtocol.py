@@ -110,18 +110,16 @@ class MSGProtocol:
     
     # Length 구하기
     def LengthFind(self):
-        Length = 27 + len(self.UsersendMSG)
-        num1 = Length                                       # Length 길이
+        num1 = 27 + len(self.UsersendMSG)                   # Length 길이
         byte2 = num1.to_bytes(1, byteorder='big')
         self.length = byte2                                 # length를 byte2값으로 구함
         return self.length
 
     # DataLength 구하기
     def DataLengthFind(self):
-        DataLength = 32 + len(self.LengthFind()) + len(self.UsersendMSG)
-        num2 = DataLength                                   # DataLength 길이
+        num2 = 32 + len(self.LengthFind()) + len(self.UsersendMSG)  # DataLength 길이
         byte1 = num2.to_bytes(2, byteorder='big')                  
-        self.datalength = byte1                             # datalength를 byte1값으로 구함
+        self.datalength = byte1                                     # datalength를 byte1값으로 구함
         return self.datalength
     
     # 사용자가 보낼 메세지
