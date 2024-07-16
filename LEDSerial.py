@@ -1,8 +1,6 @@
 import serial
 from LEDProtocol import Protocol 
 from LEDProtocol import MSGProtocol
-from LEDinputData import KoreanSTR
-import time
 class LED:
     # 시리얼 통신 - 번호, 속도, 타임아웃 "/dev/ttyUSB0"
     def __init__(self, PortNum = "/dev/ttyUSB0", baud = 57600, timeout = 1):
@@ -13,16 +11,16 @@ class LED:
         self.protocol = Protocol()
         
     # 전광판 켜고 초기화
-    def PowerONandMsgInit(self):
-        PowerONMsgInit = self.protocol.PowerOn() + self.protocol.InitEventMemory()
-        self.serial.write(PowerONMsgInit)
+    def PowerOnMsgInit(self):
+        powerONMsgInit = self.protocol.PowerOn() + self.protocol.InitEventMemory()
+        self.serial.write(powerONMsgInit)
         print("LED 전광판 전원ON 및 초기화")
         
     # 메세지 입력    
     def InputMSG(self):
         self.eventMSG = MSGProtocol()
-        LEDsendMsgEventdisplay = self.eventMSG.TotalSendEventText()
-        self.serial.write(LEDsendMsgEventdisplay)
+        inputMSG = self.eventMSG.SendEventText()
+        self.serial.write(inputMSG)
         print("LED 전광판 버퍼에 메세지가 전송됩니다.")
 
     # 전광판 메세지 출력
@@ -32,12 +30,12 @@ class LED:
         print("LED 전광판 메세지 출력")
 
     # 전광판 버퍼 삭제 및 종료
-    def ClsBUFandOFF(self):
-        LEDclsBUFandOFF = self.protocol.ClearBuffer() + self.protocol.PowerOFF()
-        self.serial.write(LEDclsBUFandOFF)
+    def ClearbufPoweroff(self):
+        clearbufPoweroff = self.protocol.ClearBuffer() + self.protocol.PowerOFF()
+        self.serial.write(clearbufPoweroff)
         print("LED 전광판 버퍼에 메세지를 삭제 후 종료")
 
     # 시리얼 포트 닫기
-    def close(self):
+    def Close(self):
         self.serial.close()
         print("serial포트를 닫았습니다.")

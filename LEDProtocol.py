@@ -23,16 +23,16 @@ class Protocol:
     # LED 전광판 전원 ON
     def PowerOn(self):
         self.SubCmdID = b'\x02'                             #전원 ON    
-        self.OnMSG = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length + self.program_id
-        self.on = self.FixedStart() + self.OnMSG + self.FixedEnd()
+        self.onMSG = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length + self.program_id
+        self.on = self.FixedStart() + self.onMSG + self.FixedEnd()
         return self.on
 
     # LED 전광판 전원 OFF
     def PowerOFF(self):
         self.SubCmdID = b'\x03'                             #전원 OFF
-        self.OffMSG = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length + self.program_id
-        self.OFF = self.FixedStart() + self.OffMSG + self.FixedEnd()
-        return self.OFF
+        self.offMSG = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length + self.program_id
+        self.off = self.FixedStart() + self.offMSG + self.FixedEnd()
+        return self.off
 
     # 이벤트 초기화
     def InitEventMemory(self):
@@ -86,14 +86,14 @@ class MSGProtocol:
         self.FontAsian = b'\x02\x00'                        #30 
         self.InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D' #31
         self.fixed = Protocol()
-        self.UsersendMSG = KoreanSTR().encodedKRstr()
+        self.usersendMSG = KoreanSTR().KRstring()
     # 이벤트텍스트전송 고정값1
     def FixedEventText1(self):
-        self.FixedData1 = self.Windows_Number + self.X_POSITION + self.W_WIDTH_PIXELS + self.Y_POSITION + self.H_HEIGHT_PIXELS
-        return self.FixedData1
+        self.fixedData1 = self.Windows_Number + self.X_POSITION + self.W_WIDTH_PIXELS + self.Y_POSITION + self.H_HEIGHT_PIXELS
+        return self.fixedData1
 
     # 이벤트텍스트전송 기능변경
-    def functionEvent(self, Action = b'\x02', Speed = b'\x00', StaySeconds = b'\x00', LoopTimes = b'\x03'):
+    def functionEvent(self, Action = b'\x02', Speed = b'\x00', StaySeconds = b'\x00', LoopTimes = b'\x00'):
         self.Action = Action                                #20
         self.Speed = Speed                                  #21
         self.StaySeconds = StaySeconds                      #22
@@ -102,28 +102,28 @@ class MSGProtocol:
         return self.functionData
     
     # 이벤트텍스트전송 고정값2
-    def FixedEventText2(self,fontColor = b'\x03'):          
+    def FixedEventText2(self,fontColor = b'\x02'):          
         self.FixedData2 = self.MemoryPosition + self.MultiLinesDisp + self.Align
         self.fontColor = fontColor                          #27 #가변 데이터 
-        self.FixedData3 = self.FixedData2 + self.fontColor + self.ReservedFontMode + self.FontAscii + self.FontAsian
-        return self.FixedData3
+        self.fixedData3 = self.FixedData2 + self.fontColor + self.ReservedFontMode + self.FontAscii + self.FontAsian
+        return self.fixedData3
     
     # Length 구하기
     def LengthFind(self):
-        num1 = 27 + len(self.UsersendMSG)                   # Length 길이
+        num1 = 27 + len(self.usersendMSG)                   # Length 길이
         byte2 = num1.to_bytes(1, byteorder='big')
         self.length = byte2                                 # length를 byte2값으로 구함
         return self.length
 
     # DataLength 구하기
     def DataLengthFind(self):
-        num2 = 32 + len(self.LengthFind()) + len(self.UsersendMSG)  # DataLength 길이
+        num2 = 32 + len(self.LengthFind()) + len(self.usersendMSG)  # DataLength 길이
         byte1 = num2.to_bytes(2, byteorder='big')                  
         self.datalength = byte1                                     # datalength를 byte1값으로 구함
         return self.datalength
     
     # 사용자가 보낼 메세지
-    def TotalSendEventText(self):
+    def SendEventText(self):
         self.DataLength = self.DataLengthFind()             # 5,6
         self.CmdEvent = b'\x45\x56\x45\x4E'                 # 7,8,9,10
         self.SubCmdID = b'\x06'                             # 이벤트 메세지 전송 # 11  
@@ -131,4 +131,4 @@ class MSGProtocol:
         self.testData = self.CmdEvent + self.SubCmdID + self.Length 
         self.sendtext = self.FixedEventText1() + self.functionEvent() + self.FixedEventText2()
         return (self.fixed.FixedStart() + self.DataLength + self.testData + self.sendtext +
-                self.InputFixData + self.UsersendMSG + self.fixed.FixedEnd())
+                self.InputFixData + self.usersendMSG + self.fixed.FixedEnd())
