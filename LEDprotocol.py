@@ -3,8 +3,8 @@ from LEDserial import Packet
 from LEDserial import MSGPacket
 class LED:
     # 시리얼 통신 - 번호, 속도, 타임아웃 "/dev/ttyUSB0"
-    def __init__(self, PortNum = "/dev/ttyUSB0", baud = 57600, timeout = 1):
-        self.portNume = PortNum
+    def __init__(self, PortNume = "/dev/ttyUSB0", baud = 57600, timeout = 1):
+        self.portNume = PortNume
         self.baud = baud
         self.timeout = timeout
         self.serial = serial.Serial(self.portNume, self.baud, timeout = 1)

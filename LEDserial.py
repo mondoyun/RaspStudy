@@ -42,8 +42,8 @@ class Packet:
         self.Length = b'\x02'
         self.program_id = b'\x04\x00'
         self.initMSG = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length + self.program_id
-        self.initbuffer = self.FixedStart() + self.initMSG + self.FixedEnd()
-        return self.initbuffer
+        self.initpacket = self.FixedStart() + self.initMSG + self.FixedEnd()
+        return self.initpacket
     
     # 화면출력
     def startWindows(self):
@@ -54,8 +54,8 @@ class Packet:
         self.Reserved_Wnd = b'\xFF'
         self.Reserved = b'\x00'
         self.windowMSG = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length + self.Reserved_Wnd + self.Reserved
-        self.printwindow = self.FixedStart() + self.windowMSG + self.FixedEnd()
-        return self.printwindow
+        self.printwindowpacket = self.FixedStart() + self.windowMSG + self.FixedEnd()
+        return self.printwindowpacket
     
     # 버퍼 삭제
     def ClearBuffer(self):
@@ -64,9 +64,9 @@ class Packet:
         self.SubCmdID = b'\x08'                             #버퍼 삭제
         self.Length = b'\x01'
         self.Reserved_Wnd = b'\xFF'
-        self.clearBUFMSG = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length + self.Reserved_Wnd
-        self.clearBUF = self.FixedStart() + self.clearBUFMSG + self.FixedEnd()
-        return self.clearBUF
+        self.clsBUFMSG = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length + self.Reserved_Wnd
+        self.clsBUFpacket = self.FixedStart() + self.clsBUFMSG + self.FixedEnd()
+        return self.clsBUFpacket
     
 class MSGPacket:
     # 이벤트 전송 메세지 프로토콜의 고정값
@@ -84,29 +84,29 @@ class MSGPacket:
         self.ReservedFontMode = b'\x00'                     #28
         self.FontAscii = b'\x01\x00'                        #29
         self.FontAsian = b'\x02\x00'                        #30 
-        self.InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D' #31 [FT501]
+        self.InputFixData = b'\x5B\x46\x54\x35\x30\x31\x5D' #31
         self.fixed = Packet()
         self.usersendMSG = KoreanSTR().KRstring()
     # 이벤트텍스트전송 고정값1
     def FixedEventText1(self):
-        self.fixedMSG1 = self.Windows_Number + self.X_POSITION + self.W_WIDTH_PIXELS + self.Y_POSITION + self.H_HEIGHT_PIXELS
-        return self.fixedMSG1
+        self.fixedEVNpacket1 = self.Windows_Number + self.X_POSITION + self.W_WIDTH_PIXELS + self.Y_POSITION + self.H_HEIGHT_PIXELS
+        return self.fixedEVNpacket1
 
     # 이벤트텍스트전송 기능변경
-    def functionEvent(self, Action = b'\x02', Speed = b'\x00', StaySeconds = b'\x00', LoopTimes = b'\x02'):
+    def functionEvent(self, Action = b'\x02', Speed = b'\x00', StaySeconds = b'\x00', LoopTimes = b'\x00'):
         self.Action = Action                                #20
         self.Speed = Speed                                  #21
         self.StaySeconds = StaySeconds                      #22
         self.LoopTimes = LoopTimes                          #23
-        self.functionMSG = self.Action + self.Speed + self.StaySeconds + self.LoopTimes
-        return self.functionMSG
+        self.functions = self.Action + self.Speed + self.StaySeconds + self.LoopTimes
+        return self.functions
     
     # 이벤트텍스트전송 고정값2
     def FixedEventText2(self,fontColor = b'\x02'):          
-        self.FixedMSG2 = self.MemoryPosition + self.MultiLinesDisp + self.Align
+        self.fixedEVNpacket2 = self.MemoryPosition + self.MultiLinesDisp + self.Align
         self.fontColor = fontColor                          #27 #가변 데이터 
-        self.fixedMSG3 = self.FixedMSG2 + self.fontColor + self.ReservedFontMode + self.FontAscii + self.FontAsian
-        return self.fixedMSG3
+        self.fixedEVNpacket3 = self.fixedEVNpacket2 + self.fontColor + self.ReservedFontMode + self.FontAscii + self.FontAsian
+        return self.fixedEVNpacket3
     
     # Length 구하기
     def LengthFind(self):
@@ -128,7 +128,7 @@ class MSGPacket:
         self.CmdEvent = b'\x45\x56\x45\x4E'                 # 7,8,9,10
         self.SubCmdID = b'\x06'                             # 이벤트 메세지 전송 # 11  
         self.Length = self.LengthFind()                     # 12
-        self.fixedMSG1 = self.CmdEvent + self.SubCmdID + self.Length 
-        self.fixedMSG2 = self.FixedEventText1() + self.functionEvent() + self.FixedEventText2()
-        return (self.fixed.FixedStart() + self.DataLength + self.fixedMSG1 + self.fixedMSG2 +
+        self.fixedpacket1 = self.CmdEvent + self.SubCmdID + self.Length 
+        self.fixedpacket2 = self.FixedEventText1() + self.functionEvent() + self.FixedEventText2()
+        return (self.fixed.FixedStart() + self.DataLength + self.fixedpacket1 + self.fixedpacket2 +
                 self.InputFixData + self.usersendMSG + self.fixed.FixedEnd())
