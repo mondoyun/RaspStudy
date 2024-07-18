@@ -1,9 +1,9 @@
-from LEDprotocol import LED
+from LEDserial import LEDdisplay
 import time
 
 if __name__ == "__main__":
 
-    Led = LED("/dev/ttyUSB0", 57600, 1) # LED 전광판 객체 생성
+    Led = LEDdisplay("/dev/ttyUSB0", 57600, 1) # LED 전광판 객체 생성
 
     Led.PowerOnMsgInit()                # 전광판 켜기
     time.sleep(1)                       # 1초 대기
