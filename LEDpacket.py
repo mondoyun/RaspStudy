@@ -47,14 +47,14 @@ class Packet:
     
     # 화면출력
     def startWindows(self):
-        self.DataLength = b'\x00\x08'
-        self.CmdEvent = b'\x45\x56\x45\x4E'
-        self.SubCmdID = b'\x07'                             #화면 출력
-        self.Length = b'\x02'
-        self.Reserved_Wnd = b'\xFF'
-        self.Reserved = b'\x00'
-        self.windowMSG = self.DataLength + self.CmdEvent + self.SubCmdID + self.Length + self.Reserved_Wnd + self.Reserved
-        self.printwindowpacket = self.FixedStart() + self.windowMSG + self.FixedEnd()
+        DataLength = b'\x00\x08'
+        CmdEvent = b'\x45\x56\x45\x4E'
+        SubCmdID = b'\x07'                             #화면 출력
+        Length = b'\x02'
+        Reserved_Wnd = b'\xFF'
+        Reserved = b'\x00'
+        windowMSG = DataLength + CmdEvent + SubCmdID + Length + Reserved_Wnd + Reserved
+        self.printwindowpacket = self.FixedStart() + windowMSG + self.FixedEnd()
         return self.printwindowpacket
     
     # 버퍼 삭제
@@ -107,15 +107,13 @@ class MSGPacket:
     # Length 구하기
     def LengthFind(self):
         num1 = 27 + len(self.usersendMSG)                   # Length 길이
-        byte2 = num1.to_bytes(1, byteorder='big')
-        self.length = byte2                                 # length를 byte2값으로 구함
+        self.length = num1.to_bytes(1, byteorder='big')     # length를 byte2값으로 구함
         return self.length
 
     # DataLength 구하기
     def DataLengthFind(self):
-        num2 = 32 + len(self.LengthFind()) + len(self.usersendMSG)  # DataLength 길이
-        byte1 = num2.to_bytes(2, byteorder='big')                  
-        self.datalength = byte1                                     # datalength를 byte1값으로 구함
+        num2 = 32 + len(self.LengthFind()) + len(self.usersendMSG)  # DataLength 길이                  
+        self.datalength = num2.to_bytes(2, byteorder='big')         # datalength를 byte1값으로 구함
         return self.datalength
     
     # 사용자가 보낼 메세지
