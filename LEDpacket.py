@@ -108,21 +108,21 @@ class MSGPacket:
     def LengthFind(self):
         num1 = 27 + len(self.usersendMSG)                   # Length 길이
         self.length = num1.to_bytes(1, byteorder='big')     # length를 byte2값으로 구함
-        return self.length
+        # return self.length
 
     # DataLength 구하기
     def DataLengthFind(self):
         num2 = 32 + len(self.LengthFind()) + len(self.usersendMSG)  # DataLength 길이                  
         self.datalength = num2.to_bytes(2, byteorder='big')         # datalength를 byte1값으로 구함
-        return self.datalength
+        # return self.datalength
     
     # 사용자가 보낼 메세지
     def SendEventText(self):
-        DataLength = self.DataLengthFind()             # 5,6
+        # DataLength = self.DataLengthFind()             # 5,6
         CmdEvent = b'\x45\x56\x45\x4E'                 # 7,8,9,10
         SubCmdID = b'\x06'                             # 이벤트 메세지 전송 # 11  
-        Length = self.LengthFind()                     # 12
-        fixedpacket1 = DataLength + CmdEvent + SubCmdID + Length 
+        # Length = self.LengthFind()                     # 12
+        fixedpacket1 = self.datalength + CmdEvent + SubCmdID + self.length 
         msgfixedpacket2 = self.FixedEventText1() + self.functionEvent() + self.FixedEventText2()
         return (self.fixed.FixedStart() + fixedpacket1 + msgfixedpacket2 +
                 self.InputKRstring + self.usersendMSG + self.fixed.FixedEnd())
