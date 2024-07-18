@@ -25,14 +25,12 @@ class Packet:
         SubCmdID = b'\x02'                             #전원 ON    
         onMSG = self.DataLength + self.CmdEvent + SubCmdID + self.Length + self.program_id
         self.onpacket = self.FixedStart() + onMSG + self.FixedEnd()
-        return self.onpacket
 
     # LED 전광판 전원 OFF
     def PowerOFF(self):
         SubCmdID = b'\x03'                             #전원 OFF
         offMSG = self.DataLength + self.CmdEvent + SubCmdID + self.Length + self.program_id
         self.offpacket = self.FixedStart() + offMSG + self.FixedEnd()
-        return self.offpacket
 
     # 이벤트 초기화
     def InitEventMemory(self):
@@ -43,7 +41,6 @@ class Packet:
         program_id = b'\x04\x00'
         initMSG = DataLength + CmdEvent + SubCmdID + Length + program_id
         self.initEventpacket = self.FixedStart() + initMSG + self.FixedEnd()
-        return self.initEventpacket
     
     # 화면출력
     def startWindows(self):
@@ -55,7 +52,6 @@ class Packet:
         Reserved = b'\x00'
         windowMSG = DataLength + CmdEvent + SubCmdID + Length + Reserved_Wnd + Reserved
         self.printwindowpacket = self.FixedStart() + windowMSG + self.FixedEnd()
-        return self.printwindowpacket
     
     # 버퍼 삭제
     def ClearBuffer(self):
@@ -66,7 +62,6 @@ class Packet:
         Reserved_Wnd = b'\xFF'
         clearBUFMSG = DataLength + CmdEvent + SubCmdID + Length + Reserved_Wnd
         self.clearBUFpacket = self.FixedStart() + clearBUFMSG + self.FixedEnd()
-        return self.clearBUFpacket
     
 class MSGPacket:
     # 이벤트 전송 메세지 패킷의 고정값
@@ -91,38 +86,36 @@ class MSGPacket:
     # 이벤트텍스트전송 고정값1
     def FixedEventText1(self):
         self.fixedEVNpacket1 = self.Windows_Number + self.X_POSITION + self.W_WIDTH_PIXELS + self.Y_POSITION + self.H_HEIGHT_PIXELS
-        return self.fixedEVNpacket1
 
     # 이벤트텍스트전송 기능변경
     def functionEvent(self, Action = b'\x02', Speed = b'\x00', StaySeconds = b'\x00', LoopTimes = b'\x02'):
         self.functions = Action + Speed + StaySeconds + LoopTimes
-        return self.functions
-    
+
     # 이벤트텍스트전송 고정값2
     def FixedEventText2(self,fontColor = b'\x04'):          
         fixedEVNpacket2 = self.MemoryPosition + self.MultiLinesDisp + self.Align
         self.fixedEVNpacket3 = fixedEVNpacket2 + fontColor + self.ReservedFontMode + self.FontAscii + self.FontAsian
-        return self.fixedEVNpacket3
     
     # Length 구하기
     def LengthFind(self):
-        num1 = 27 + len(self.usersendMSG)                   # Length 길이
-        self.length = num1.to_bytes(1, byteorder='big')     # length를 byte2값으로 구함
-        # return self.length
+        num1 = 27 + len(self.usersendMSG)                       # Length 길이
+        self.length = num1.to_bytes(1, byteorder='big')         # length를 byte2값으로 구함
 
     # DataLength 구하기
     def DataLengthFind(self):
-        num2 = 32 + len(self.LengthFind()) + len(self.usersendMSG)  # DataLength 길이                  
-        self.datalength = num2.to_bytes(2, byteorder='big')         # datalength를 byte1값으로 구함
-        # return self.datalength
+        self.LengthFind()                                       # 12
+        num2 = 32 + len(self.length) + len(self.usersendMSG)    # DataLength 길이                  
+        self.datalength = num2.to_bytes(2, byteorder='big')     # datalength를 byte1값으로 구함
     
     # 사용자가 보낼 메세지
     def SendEventText(self):
-        # DataLength = self.DataLengthFind()             # 5,6
+        self.DataLengthFind()                          # 5,6
         CmdEvent = b'\x45\x56\x45\x4E'                 # 7,8,9,10
-        SubCmdID = b'\x06'                             # 이벤트 메세지 전송 # 11  
-        # Length = self.LengthFind()                     # 12
+        SubCmdID = b'\x06'                             # 11 이벤트 메세지 전송  
         fixedpacket1 = self.datalength + CmdEvent + SubCmdID + self.length 
-        msgfixedpacket2 = self.FixedEventText1() + self.functionEvent() + self.FixedEventText2()
+        self.FixedEventText1()
+        self.functionEvent()
+        self.FixedEventText2()
+        msgfixedpacket2 = self.fixedEVNpacket1 + self.functions + self.fixedEVNpacket3
         return (self.fixed.FixedStart() + fixedpacket1 + msgfixedpacket2 +
                 self.InputKRstring + self.usersendMSG + self.fixed.FixedEnd())

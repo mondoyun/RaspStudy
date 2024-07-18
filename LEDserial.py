@@ -12,7 +12,9 @@ class LEDdisplay:
         
     # 전광판 켜고 이벤트메세지 초기화
     def PowerOnMsgInit(self):
-        powerONMsgInit = self.packet.PowerOn() + self.packet.InitEventMemory()
+        self.packet.InitEventMemory()
+        self.packet.PowerOn()
+        powerONMsgInit = self.packet.onpacket + self.packet.initEventpacket
         self.serial.write(powerONMsgInit)
         print("LED 전광판 전원ON 및 초기화")
         
@@ -25,13 +27,15 @@ class LEDdisplay:
 
     # 전광판 메세지 출력
     def startdisplay(self):
-        display = self.packet.startWindows()
-        self.serial.write(display)
+        self.packet.startWindows()
+        self.serial.write(self.packet.printwindowpacket)
         print("LED 전광판 메세지 출력")
 
     # 전광판 버퍼 삭제 및 종료
     def ClearbufPoweroff(self):
-        clearbufPoweroff = self.packet.ClearBuffer() + self.packet.PowerOFF()
+        self.packet.ClearBuffer()
+        self.packet.PowerOFF()
+        clearbufPoweroff = self.packet.clearBUFpacket + self.packet.offpacket
         self.serial.write(clearbufPoweroff)
         print("LED 전광판 버퍼에 메세지를 삭제 후 종료")
 
